@@ -1,16 +1,15 @@
 const express = require('express');
-const { getCategories } = require('./controller/category_controller');
+const { getCategories, getReviewById } = require('./controller/category_controller');
 
 const app = express();
-app.use(express.json());
+// app.use(express.json());
 
 // Get all info on categories currently available
 app.get('/api/categories', getCategories);
 
-
-
-
-
+// Get information for a specific review
+// NO IDEA WHY THIS ISN'T RUNNING
+app.get('/api/reviews/:review_id', getReviewById)
 
 // Error handler for incorrect url
 app.all('/*', (req, res) => {
