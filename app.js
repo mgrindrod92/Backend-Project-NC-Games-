@@ -1,5 +1,6 @@
 const express = require('express');
-const { getCategories, getReviewById } = require('./controller/category_controller');
+const { getCategories } = require('./controller/category_controller');
+const { getReviewById } = require('./controller/reviews_controller');
 
 const app = express();
 // app.use(express.json());
@@ -8,23 +9,20 @@ const app = express();
 app.get('/api/categories', getCategories);
 
 // Get information for a specific review
-// NO IDEA WHY THIS ISN'T RUNNING
 app.get('/api/reviews/:review_id', getReviewById)
 
-// Error handler for incorrect url
-app.all('/*', (req, res) => {
-    res.status(404).send({ msg: 'Route not found' })
-});
-
-// Error handler to return a 400 error (bad request)
+// Error handler
 app.use((err, req, res, next) => {
-    res.status(err.status).send(err.msg)
+    if(err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg })
+    }
+    res.status(500).send('Server Error')
 })
 
-// final error handler
-app.use((err, req, res, next) => {
-    res.status(500).send('Server Error')
-});
+// // final error handler
+// app.use((err, req, res, next) => {
+// res.status(500).send('Server Error')
+// });
 
 // // Testing with Insomnia
 // app.listen(9801, (err) => {

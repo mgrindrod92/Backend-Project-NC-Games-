@@ -12,7 +12,6 @@ const seed = require('../db/seeds/seed');
 const app = require('../app');
 
 const testData = require('../db/data/test-data');
-const res = require('express/lib/response');
 
 beforeEach(() => {
     return seed(testData);
@@ -44,26 +43,42 @@ describe('GET api/categories', () => {
     });
 });
 
-describe.only('GET api/reviews/:review_id', () => {
-    (test('200: returns a complete review for a given id', () => {
+describe('GET api/reviews/:review_id', () => {
+    test('200: returns a complete review for a given id', () => {
         const review_id = 3;
         return request(app)
         .get(`/api/reviews/${review_id}`)
         .expect(200)
         .then(({ body }) =>  {
-            const actualReview = body.rows[0]
-            expect(typeof actualReview).toBe(object);
+            const actualReview = body.review
+            expect(typeof actualReview).toBe('object');
             expect(actualReview).toEqual({
-                review_id: reviewId,
-                title: 1,
-                review_body: 1,
-                designer: 1,
-                review_img_url: 1,
-                votes: 1,
-                category: 1,
-                owner: 1,
-                created_at: convertTimestampToDate
+                review_id: review_id,
+                title: 'Ultimate Werewolf',
+                review_body: 'We couldn\'t find the werewolf!',
+                designer: 'Akihisa Okui',
+                review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                votes: 5,
+                category: 'social deduction',
+                owner: 'bainesface',
+                created_at: new Date(1610964101251).toISOString()
             })
         })
-    }));
+    });
+    test('400: Returns a message when passed an invalid review id', () => {
+        const review_id = 'notarealreviewnumber'
+        return request(app)
+        .get('/api/reviews/notarealreviewnumber')
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`Bad request. ${review_id} is not a valid review id`);
+        })
+    })
+    test('404: Message error when review id is not in database', () => {
+        return request(app)
+        .get('/api/reviews/123456789')
+        .expect(404)
+        .then(({ body }) => 
+        expect(body.msg).toBe('Not found. This review does not exist'))
+    })
 })
