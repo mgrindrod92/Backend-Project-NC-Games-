@@ -21,6 +21,14 @@ afterAll(() => {
     return db.end()
 });
 
+describe('GET api/notcategories', () => {
+it('provides a 404 error for an incorrect url', () => {
+    return request(app)
+    .get('/api/notcategories')
+    .expect(404)
+});
+})
+
 describe('GET api/categories', () => {
     it('200: returns a list of categories of games with the correct format', () => {
         return request(app).get('/api/categories').expect(200).then(res => {
@@ -34,12 +42,6 @@ describe('GET api/categories', () => {
                 })
             })
         })
-    });
-    it('provides a 404 error for an incorrect url', () => {
-        return request(app).get('/api/notcategories').expect(404)
-        .then(({ body }) => {
-            expect(body.msg).toBe('Route not found')
-        });
     });
 });
 
@@ -80,5 +82,36 @@ describe('GET api/reviews/:review_id', () => {
         .expect(404)
         .then(({ body }) => 
         expect(body.msg).toBe('Not found. This review does not exist'))
+    })
+})
+
+describe('PATCH api/reviews/:review_id', () => {
+    test('200: returns an updated review (with the new number of votes)', () => {
+        const review_id = 9;
+        const changeToVotes = { inc_votes: 5 };
+        return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body }) => {
+            const originalReview = body.review;
+            // console.log(body.review)
+            const updatedVotes = body.review.votes + changeToVotes.inc_votes
+            console.log({
+                review_id: 9,
+                ...updatedVotes
+            })
+            const updatedReview = {
+                review_id: 9,
+      title: 'A truly Quacking Game; Quacks of Quedlinburg',
+      category: 'social deduction',
+      designer: 'Wolfgang Warsch',
+      owner: 'mallionaire',
+      review_body: "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+      review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+      created_at: '2021-01-18T10:01:41.251Z',
+      votes: 15
+            }
+            expect(1).toEqual(updatedReview);
+        })
     })
 })
