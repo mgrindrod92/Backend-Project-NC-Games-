@@ -14,6 +14,13 @@ exports.updateReview = (review_id, votes) => {
             msg: 'The vote value provided is not valid',
         })
     }
+        if (isNaN(review_id)) {
+        return Promise.reject({
+            status: 400,
+            msg: `Bad request. ${review_id} is not a valid review id`
+        })
+    }
+
         return db.query
             (`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`,
                 [votes, review_id])
@@ -23,8 +30,8 @@ exports.updateReview = (review_id, votes) => {
                 status: 404,
                 msg: `No review found with this review id`
             })
-        }
-    return review.rows;
+        } 
+    return review.rows[0];
     })
 }
 

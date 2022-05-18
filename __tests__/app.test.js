@@ -3,8 +3,8 @@ process.env.NODE_ENV = 'test';
 const db = require('../db/connection.js');
 
 const request = require('supertest');
-const pg = require('pg');
-const format = require('pg-format');
+// const pg = require('pg');
+// const format = require('pg-format');
 // require('jest');
 // require('jest-sorted');
 
@@ -86,13 +86,25 @@ describe('GET api/reviews/:review_id', () => {
 })
 
 describe.only('PATCH api/reviews/:review_id', () => {
+    const review = {
+    review_id: 9,
+    title: 'A truly Quacking Game; Quacks of Quedlinburg',
+    category: 'social deduction',
+    designer: 'Wolfgang Warsch',
+    owner: 'mallionaire',
+    review_body: "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+    review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+    created_at: '2021-01-18T10:01:41.251Z',
+    votes: 20
+  }
     test("200: returns a 200 status with the initial review", () => {
         return request(app)
         .patch('/api/reviews/9')
         .send({ inc_votes: 10 })
         .expect(200)
         .then(({ body }) => {
-            expect(typeof body).toBe('object');   
+            expect(typeof body).toBe('object'); 
+            expect(body.review).toEqual(review);
         })
     })
     test('200: returns an updated review (with the new number of votes)', () => {
@@ -101,7 +113,7 @@ describe.only('PATCH api/reviews/:review_id', () => {
         .send({ inc_votes: 10 })
         .expect(200)
         .then(({ body }) => {
-            expect(body.review[0].votes).toBe(20);
+            expect(body.review.votes).toBe(20);
         })
     })
     test('200: returns an updated review when passed a negative number of votes', () => {
@@ -109,7 +121,7 @@ describe.only('PATCH api/reviews/:review_id', () => {
         .patch(`/api/reviews/1`)
         .send({ inc_votes: -2 })
         .then(({ body }) => {
-            expect(body.review[0].votes).toBe(-1);
+            expect(body.review.votes).toBe(-1);
         })        
     })
     test('404: Returns an error status when passed a review id that doesn\'t exist', () => {

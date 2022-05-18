@@ -27,12 +27,6 @@ exports.patchReview = (req, res, next) => {
     const {review_id} = req.params;
     const {inc_votes} = req.body
 
-    if (isNaN(review_id)) {
-        return next({
-            status: 400,
-            msg: `Bad request. ${review_id} is not a valid review id`
-        })
-    }
     updateReview (review_id, inc_votes)
     .then((review) => {
         res.status(200).send({ review });
