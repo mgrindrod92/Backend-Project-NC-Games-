@@ -85,33 +85,58 @@ describe('GET api/reviews/:review_id', () => {
     })
 })
 
-describe('PATCH api/reviews/:review_id', () => {
-    test('200: returns an updated review (with the new number of votes)', () => {
-        const review_id = 9;
-        const changeToVotes = { inc_votes: 5 };
+describe.only('PATCH api/reviews/:review_id', () => {
+    test("200: returns a 200 status with the initial review", () => {
         return request(app)
-        .get(`/api/reviews/${review_id}`)
+        .patch('/api/reviews/9')
+        .send({ inc_votes: 10 })
         .expect(200)
         .then(({ body }) => {
-            const originalReview = body.review;
-            // console.log(body.review)
-            const updatedVotes = body.review.votes + changeToVotes.inc_votes
-            console.log({
-                review_id: 9,
-                ...updatedVotes
-            })
-            const updatedReview = {
-                review_id: 9,
-      title: 'A truly Quacking Game; Quacks of Quedlinburg',
-      category: 'social deduction',
-      designer: 'Wolfgang Warsch',
-      owner: 'mallionaire',
-      review_body: "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
-      review_img_url: 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
-      created_at: '2021-01-18T10:01:41.251Z',
-      votes: 15
-            }
-            expect(1).toEqual(updatedReview);
+            expect(typeof body).toBe('object');   
+        })
+    })
+    test('200: returns an updated review (with the new number of votes)', () => {
+        return request(app)
+        .patch(`/api/reviews/9`)
+        .send({ inc_votes: 10 })
+        .expect(200)
+        .then(({ body }) => {
+            expect(body.review[0].votes).toBe(20);
+        })
+    })
+    test('200: returns an updated review when passed a negative number of votes', () => {
+        return request(app)
+        .patch(`/api/reviews/1`)
+        .send({ inc_votes: -2 })
+        .then(({ body }) => {
+            expect(body.review[0].votes).toBe(-1);
+        })        
+    })
+    test('404: Returns an error status when passed a review id that doesn\'t exist', () => {
+        return request(app)
+        .patch('/api/reviews/345')
+        .send({ inc_votes: 1})
+        .expect(404)
+        .then(({ body }) => 
+        expect(body.msg).toBe('No review found with this review id'))
+    })
+    test('400: Returns an error status and message when review_id is invalid', () => {
+        const review_id = 'notavalidid'
+        return request(app)
+        .patch('/api/reviews/notavalidid')
+        .send({ inc_votes: 1 })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe(`Bad request. ${review_id} is not a valid review id`)
+        })
+    })
+    test('400: Returns an error status and message when inc_votes is invalid', () => {
+        return request(app)
+        .patch('/api/reviews/5')
+        .send({ inc_votes: 'more votes please' })
+        .expect(400)
+        .then(({ body }) => {
+            expect(body.msg).toBe('The vote value provided is not valid')
         })
     })
 })
