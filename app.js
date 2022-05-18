@@ -1,15 +1,18 @@
 const express = require('express');
 const { getCategories } = require('./controller/category_controller');
-const { getReviewById } = require('./controller/reviews_controller');
+const { getReviewById, patchReview } = require('./controller/reviews_controller');
 
 const app = express();
-// app.use(express.json());
+app.use(express.json());
 
 // Get all info on categories currently available
 app.get('/api/categories', getCategories);
 
 // Get information for a specific review
 app.get('/api/reviews/:review_id', getReviewById)
+
+// For a specific review increase/decrease the review's vote value
+app.patch('/api/reviews/:review_id', patchReview)
 
 // Error handler
 app.use((err, req, res, next) => {
