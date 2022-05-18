@@ -1,18 +1,27 @@
 const express = require('express');
 const { getCategories } = require('./controller/category_controller');
 const { getReviewById, patchReview } = require('./controller/reviews_controller');
+const { getUsers } = require('./controller/users_controller');
 
 const app = express();
 app.use(express.json());
 
-// Get all info on categories currently available
+// TASK 3 - Get all info on categories currently available
 app.get('/api/categories', getCategories);
 
-// Get information for a specific review
+// TASK 4 - Get information for a specific review
 app.get('/api/reviews/:review_id', getReviewById)
 
-// For a specific review increase/decrease the review's vote value
+// TASK 5 - For a specific review increase/decrease the review's vote value
 app.patch('/api/reviews/:review_id', patchReview)
+
+// TASK 6 - Get all information on users currently available
+app.get('/api/users', getUsers);
+
+// 404 error
+app.all('/*', (req, res) => {
+    res.status(404).send({ msg: 'Route not found' })
+})
 
 // Error handler
 app.use((err, req, res, next) => {
