@@ -2,6 +2,7 @@ const express = require('express');
 const { getCategories } = require('./controller/category_controller');
 const { getReviewById, patchReview, getReviews } = require('./controller/reviews_controller');
 const { getUsers } = require('./controller/users_controller');
+const { getCommentsByReviewId } = require('./controller/comments_controller');
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,9 @@ app.get('/api/users', getUsers);
 
 // TASK 8 - Get all reviews (including comment_count)
 app.get('/api/reviews', getReviews);
+
+// TASK 9 - Get all comments for a specific review
+app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
 
 // 404 error
 app.all('/*', (req, res) => {
