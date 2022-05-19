@@ -238,6 +238,7 @@ describe('GET/api/reviews', () => {
                     })
             })
         expect(reviews).toBeSortedBy('created_at', {descending: true})
+        console.log(reviews);
         })
         })
 it('404: provides a 404 error for an incorrect url', () => {
