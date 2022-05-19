@@ -3,12 +3,6 @@ const { selectReviewById, updateReview } = require('../model/reviews_model');
 exports.getReviewById = (req, res, next) => {
     const { review_id } = req.params;
 
-    if (isNaN(review_id)) {
-        return next({
-            status: 400,
-            msg: `Bad request. ${review_id} is not a valid review id`
-        })
-    }
     selectReviewById(review_id)
         .then((review) => {
             if (!review) {
@@ -19,7 +13,7 @@ exports.getReviewById = (req, res, next) => {
             } else {
                 res.status(200).send({ review })
             }
-        })
+})
         .catch(next);
 };
 
