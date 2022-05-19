@@ -80,7 +80,7 @@ describe('GET api/reviews/:review_id', () => {
                 expect(body.msg).toBe(`Invalid input`);
             })
     })
-    test.only('404: Message error when review id is not in database', () => {
+    test('404: Message error when review id is not in database', () => {
         return request(app)
             .get('/api/reviews/123456789')
             .expect(404)
