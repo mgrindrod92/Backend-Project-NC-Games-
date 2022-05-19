@@ -1,6 +1,6 @@
 const express = require('express');
 const { getCategories } = require('./controller/category_controller');
-const { getReviewById, patchReview } = require('./controller/reviews_controller');
+const { getReviewById, patchReview, getReviews } = require('./controller/reviews_controller');
 const { getUsers } = require('./controller/users_controller');
 
 const app = express();
@@ -18,6 +18,9 @@ app.patch('/api/reviews/:review_id', patchReview)
 
 // TASK 6 - Get all information on users currently available
 app.get('/api/users', getUsers);
+
+// TASK 8 - Get all reviews (including comment_count)
+app.get('/api/reviews', getReviews);
 
 // 404 error
 app.all('/*', (req, res) => {
