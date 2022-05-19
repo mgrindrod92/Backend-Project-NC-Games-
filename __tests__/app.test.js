@@ -46,7 +46,7 @@ describe('GET api/categories', () => {
     });
 });
 
-// TASK 4
+// TASKS 4 and 7
 
 describe('GET api/reviews/:review_id', () => {
     test('200: returns a complete review for a given id', () => {
@@ -57,7 +57,7 @@ describe('GET api/reviews/:review_id', () => {
             .then(({ body }) => {
                 const actualReview = body.review
                 expect(typeof actualReview).toBe('object');
-                expect(actualReview).toEqual({
+                expect(actualReview).toEqual(expect.objectContaining({
                     review_id: review_id,
                     title: 'Ultimate Werewolf',
                     review_body: 'We couldn\'t find the werewolf!',
@@ -66,8 +66,8 @@ describe('GET api/reviews/:review_id', () => {
                     votes: 5,
                     category: 'social deduction',
                     owner: 'bainesface',
-                    created_at: new Date(1610964101251).toISOString()
-                })
+                    created_at: new Date(1610964101251).toISOString(),
+                }))
             })
     });
     test('400: Returns a message when passed an invalid review id', () => {
@@ -76,7 +76,7 @@ describe('GET api/reviews/:review_id', () => {
             .get('/api/reviews/notarealreviewnumber')
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe(`Bad request. ${review_id} is not a valid review id`);
+                expect(body.msg).toBe(`Invalid input`);
             })
     })
     test('404: Message error when review id is not in database', () => {
@@ -86,6 +86,29 @@ describe('GET api/reviews/:review_id', () => {
             .then(({ body }) =>
                 expect(body.msg).toBe('Not found. This review does not exist'))
     })
+    test('200: returns a complete review for a given id with comment count added', () => {
+        const review_id = 3;
+        const testReview = {
+            review_id: review_id,
+            title: 'Ultimate Werewolf',
+            review_body: 'We couldn\'t find the werewolf!',
+            designer: 'Akihisa Okui',
+            review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+            votes: 5,
+            category: 'social deduction',
+            owner: 'bainesface',
+            created_at: new Date(1610964101251).toISOString(),
+            comment_count: 3
+        }
+        return request(app)
+            .get(`/api/reviews/${review_id}`)
+            .expect(200)
+            .then(({ body }) => {
+                const actualReview = body.review
+                expect(typeof actualReview).toBe('object');
+                expect(actualReview).toEqual(testReview)
+            })
+    });
 })
 
 // TASK 5
@@ -144,7 +167,7 @@ describe('PATCH api/reviews/:review_id', () => {
             .send({ inc_votes: 1 })
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe(`Bad request. ${review_id} is not a valid review id`)
+                expect(body.msg).toBe(`Invalid input`)
             })
     })
     test('400: Returns an error status and message when inc_votes is invalid', () => {
@@ -153,14 +176,14 @@ describe('PATCH api/reviews/:review_id', () => {
             .send({ inc_votes: 'more votes please' })
             .expect(400)
             .then(({ body }) => {
-                expect(body.msg).toBe('The vote value provided is not valid')
+                expect(body.msg).toBe('Invalid input')
             })
     })
 })
 
 // TASK 6
 
-describe.only('GET /api/users', () => {
+describe('GET /api/users', () => {
     it('200: returns a list of users with the correct format', () => {
 
         return request(app)
@@ -180,7 +203,7 @@ describe.only('GET /api/users', () => {
             })
         })
 
-        it.only('404: provides a 404 error for an incorrect url', () => {
+        it('404: provides a 404 error for an incorrect url', () => {
             return request(app).
                 get('/api/notusers')
                 .expect(404)
@@ -189,3 +212,5 @@ describe.only('GET /api/users', () => {
                 })
         })
     });
+
+    // TASK 8
