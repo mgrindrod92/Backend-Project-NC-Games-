@@ -11,7 +11,7 @@ exports.selectReviewById = (review_id) => {
 }
 
 exports.updateReview = (review_id, votes) => {
-
+    console.log('in the model')
         return db.query
             (`UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *;`,
                 [votes, review_id])
@@ -26,3 +26,13 @@ exports.updateReview = (review_id, votes) => {
     })
 }
 
+exports.selectReviews = () => {
+    return db.query(
+    `SELECT reviews.*, CAST (COUNT(comments.review_id) AS INTEGER) AS comment_count
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id 
+    GROUP BY reviews.review_id ORDER BY created_at DESC`)
+    .then((reviews) => {
+    return reviews.rows;
+    })
+    }

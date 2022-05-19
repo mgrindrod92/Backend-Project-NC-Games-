@@ -201,16 +201,51 @@ describe('GET /api/users', () => {
                     })
                 })
             })
-        })
+    })
 
-        it('404: provides a 404 error for an incorrect url', () => {
-            return request(app).
-                get('/api/notusers')
-                .expect(404)
-                .then( body => {
-                    expect(JSON.parse(body.text)).toEqual({msg: 'Route not found'})
-                })
-        })
-    });
+    it('404: provides a 404 error for an incorrect url', () => {
+        return request(app).
+            get('/api/notusers')
+            .expect(404)
+            .then(body => {
+                expect(JSON.parse(body.text)).toEqual({ msg: 'Route not found' })
+            })
+    })
+});
 
-    // TASK 8
+// TASK 8
+
+describe('GET/api/reviews', () => {
+    it('200: responds with an object of reviews containing an array sorted by date in descending order', () => {
+        return request(app)
+        .get('/api/reviews')
+        .expect(200)
+            .then(res => {
+                const reviews = res.body.reviews
+                expect(reviews.length).toBe(13)
+                expect(Array.isArray(reviews)).toBe(true);
+
+                res.body.reviews.forEach(user => {
+                    expect.objectContaining({
+                        owner: expect.any(String),
+                        title: expect.any(String),
+                        review_id: expect.any(Number),
+                        category: expect.any(String),
+                        review_img_url: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number)
+                    })
+            })
+        expect(reviews).toBeSortedBy('created_at', {descending: true})
+        })
+        })
+it('404: provides a 404 error for an incorrect url', () => {
+    return request(app)
+        .get('/api/notreviews')
+        .expect(404)
+        .then(body => {
+            expect(JSON.parse(body.text)).toEqual({ msg: 'Route not found' })
+        })
+})
+        });
