@@ -1,8 +1,12 @@
 const db = require('../db/connection');
 
 exports.selectReviewById = (review_id) => {
-    return db.query('SELECT * FROM reviews WHERE review_id = $1', [review_id])
-        .then((review) => {
+    return db.query(`SELECT reviews.*, CAST (COUNT(comments.review_id) AS INTEGER) AS comment_count
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id 
+    WHERE reviews.review_id = $1 GROUP BY reviews.review_id`, [review_id])
+    .then((review) => {
+            console.log(review.rows[0]);
             return review.rows[0];
         })
 }
@@ -31,6 +35,7 @@ exports.updateReview = (review_id, votes) => {
                 msg: `No review found with this review id`
             })
         } 
+        console.log(review.rows[0])
     return review.rows[0];
     })
 }

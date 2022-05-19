@@ -10,6 +10,7 @@ app.use(express.json());
 app.get('/api/categories', getCategories);
 
 // TASK 4 - Get information for a specific review
+// TASK 7 - Get all comments for a specific reviewm,
 app.get('/api/reviews/:review_id', getReviewById)
 
 // TASK 5 - For a specific review increase/decrease the review's vote value
@@ -17,6 +18,7 @@ app.patch('/api/reviews/:review_id', patchReview)
 
 // TASK 6 - Get all information on users currently available
 app.get('/api/users', getUsers);
+
 
 // 404 error
 app.all('/*', (req, res) => {

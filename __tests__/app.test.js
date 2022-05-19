@@ -160,7 +160,7 @@ describe('PATCH api/reviews/:review_id', () => {
 
 // TASK 6
 
-describe.only('GET /api/users', () => {
+describe('GET /api/users', () => {
     it('200: returns a list of users with the correct format', () => {
 
         return request(app)
@@ -180,7 +180,7 @@ describe.only('GET /api/users', () => {
             })
         })
 
-        it.only('404: provides a 404 error for an incorrect url', () => {
+        it('404: provides a 404 error for an incorrect url', () => {
             return request(app).
                 get('/api/notusers')
                 .expect(404)
@@ -189,3 +189,31 @@ describe.only('GET /api/users', () => {
                 })
         })
     });
+
+    // TASK 7
+
+describe.only('GET/api/reviews/:review_id to include comment count', () => {
+    test('200: returns a complete review for a given id with comment count added', () => {
+        const review_id = 3;
+        const testReview = {
+            review_id: review_id,
+            title: 'Ultimate Werewolf',
+            review_body: 'We couldn\'t find the werewolf!',
+            designer: 'Akihisa Okui',
+            review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+            votes: 5,
+            category: 'social deduction',
+            owner: 'bainesface',
+            created_at: new Date(1610964101251).toISOString(),
+            comment_count: 3
+        }
+        return request(app)
+            .get(`/api/reviews/${review_id}`)
+            .expect(200)
+            .then(({ body }) => {
+                const actualReview = body.review
+                expect(typeof actualReview).toBe('object');
+                expect(actualReview).toEqual(testReview)
+            })
+    });
+})
