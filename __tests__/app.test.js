@@ -46,7 +46,7 @@ describe('GET api/categories', () => {
     });
 });
 
-// TASK 4 and 7
+// TASKS 4 and 7
 
 describe('GET api/reviews/:review_id', () => {
     test('200: returns a complete review for a given id', () => {
@@ -57,7 +57,7 @@ describe('GET api/reviews/:review_id', () => {
             .then(({ body }) => {
                 const actualReview = body.review
                 expect(typeof actualReview).toBe('object');
-                expect(actualReview).toEqual({
+                expect(actualReview).toEqual(expect.objectContaining({
                     review_id: review_id,
                     title: 'Ultimate Werewolf',
                     review_body: 'We couldn\'t find the werewolf!',
@@ -67,8 +67,7 @@ describe('GET api/reviews/:review_id', () => {
                     category: 'social deduction',
                     owner: 'bainesface',
                     created_at: new Date(1610964101251).toISOString(),
-                    comment_count: expect.any(Number)
-                })
+                }))
             })
     });
     test('400: Returns a message when passed an invalid review id', () => {
