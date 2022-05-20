@@ -252,6 +252,8 @@ describe('GET/api/reviews', () => {
     })
 });
 
+// TASK 9
+
 describe('GET//api/reviews/:review_id/comments', () => {
     it('200: responds with an object (array) of comments for a given review', () => {
         return request(app)
@@ -298,49 +300,51 @@ describe('GET//api/reviews/:review_id/comments', () => {
                 expect(body).toEqual([])
             })
     })
-    // TASK 10
+})
 
-    describe('POST/api/reviews/:review_id/comments', () => {
-        it('201: adds a comment to review_id and responds with the comment', () => {
-            const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
+// TASK 10
 
-            return request(app)
-                .post('/api/reviews/1/comments')
-                .send(newComment)
-                .expect(201)
-                .then(({ body }) => {
-                    expect(body.comment).toEqual(expect.objectContaining({
-                        comment_id: 7,
-                        author: 'mallionaire',
-                        body: 'Yeah, not bad, I guess',
-                        votes: 0,
-                        review_id: 1,
-                        created_at: expect.any(String)
-                    }))
-                })
-        })
+describe('POST/api/reviews/:review_id/comments', () => {
+    it('201: adds a comment to review_id and responds with the comment', () => {
+        const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
 
-        it('201: adds a comment to review_id and responds with the comment', () => {
-            const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess', hello: 12 };
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment).toEqual(expect.objectContaining({
+                    comment_id: 7,
+                    author: 'mallionaire',
+                    body: 'Yeah, not bad, I guess',
+                    votes: 0,
+                    review_id: 1,
+                    created_at: expect.any(String)
+                }))
+            })
+    })
 
-            return request(app)
-                .post('/api/reviews/1/comments')
-                .send(newComment)
-                .expect(201)
-                .then(({ body }) => {
-                    expect(body.comment.hello).toBe(undefined);
-                })
-        })
+    it('201: adds a comment to review_id and responds with the comment', () => {
+        const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess', hello: 12 };
+
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(201)
+            .then(({ body }) => {
+                expect(body.comment.hello).toBe(undefined);
+            })
+    })
 
     it('400: Returns "invalid input" when the passed body does not contain both the username and body keys', () => {
         const newComment = { usernaimasdasda: 'mallionaire', bodayasdasd: 'Yeah, not bad, I guess' }
         return request(app)
-        .post('/api/reviews/1/comments')
-        .send(newComment)
-        .expect(400)        
-        .then(({ body }) => {
-            expect(body.msg).toBe('Invalid input');
-        })
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Invalid input');
+            })
     })
 
     it('404: "Resource not found" message provided when username not in database tries to post', () => {
@@ -352,34 +356,124 @@ describe('GET//api/reviews/:review_id/comments', () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe('Resource not found');
-                })
+            })
     })
 
-    it('400: Returns "Invalid input" when given a non-number as review_id', ( )=> {
+    it('400: Returns "Invalid input" when given a non-number as review_id', () => {
         const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
 
         return request(app)
-        .post('/api/reviews/jygjvjvh/comments')
-        .send(newComment)
-        .expect(400)
-        .then( ({body}) => {
-            expect(body.msg).toBe('Invalid input');
-        })
+            .post('/api/reviews/jygjvjvh/comments')
+            .send(newComment)
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Invalid input');
+            })
     })
 
     it('404: "Resource not found" when given number that does not match a review_id', () => {
         const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
 
         return request(app).post('/api/reviews/12345/comments')
-        .send(newComment)
-        .expect(404)
-        .then( ({ body }) => 
-        expect(body.msg).toBe('Resource not found'))
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) =>
+                expect(body.msg).toBe('Resource not found'))
     })
 
 })
 
-    /*
+// TASK 11
 
-    */
+describe('GET/api/reviews?sort_byQUERY1&order=ASC/DESC&category=QUERY3 queries', () => {
+    it('200: sorts by descending date by default', () => {
+
+        return request(app)
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                const {reviews} = body;
+                expect(reviews.length).toBe(13);
+                expect(Array.isArray(reviews)).toBe(true);
+
+                expect(reviews).toBeSortedBy('created_at', { descending: true }
+            )
+    })
 })
+    it('200: sorts by date by ascending order when order = ASC is used', () => {
+
+        return request(app)
+        .get('/api/reviews?order=ASC')
+        .expect(200)
+        .then(({ body }) => {
+            const {reviews} = body;
+            expect(reviews.length).toBe(13);
+            expect(Array.isArray(reviews)).toBe(true);
+
+            expect(reviews).toBeSortedBy('created_at')
+            // Ascending by default
+        })
+    })
+    it('200: sorts by value used for "sort by" ', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=owner')
+        .expect(200)
+        .then(({ body }) => {
+            const {reviews} = body;
+            expect(reviews.length).toBe(13);
+            expect(Array.isArray(reviews)).toBe(true);
+
+            expect(reviews).toBeSortedBy('owner', {descending: true})
+        })
+    })
+    it('200: filters to only show results filtered by category', () => {
+        return request(app)
+        .get('/api/reviews?category=social%20deduction')
+        .expect(200)
+        .then(({ body }) => {
+            const {reviews} = body;
+            expect(reviews.length).toBe(11);
+            expect(Array.isArray(reviews)).toBe(true);
+
+            expect(reviews).toBeSortedBy('created_at', {descending: true})
+        })
+    })
+    it('200: handles all queries at once', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=owner&order=ASC&category=social%20deduction')
+        .expect(200)
+        .then(( {body}) => {
+            const {reviews} = body;
+            expect(reviews.length).toBe(11);
+            expect(Array.isArray(reviews)).toBe(true);
+
+            expect(reviews).toBeSortedBy('owner');
+        })
+    })
+    it('404: Returns "Invalid input" message for category that doesn\'t exist', () => {
+        return request(app)
+        .get('/api/reviews?category=blind%20luck')
+        .expect(404)
+        .then( ({body}) => {
+            expect(body.msg).toBe('Invalid input');
+        })
+    })
+    it('400: Returns "Invalid input" for sort_by query that is invalid', () => {
+        return request(app)
+        .get('/api/reviews?sort_by=randomnotreal')
+        .expect(400)
+        .then( ({body}) => {
+            expect(body.msg).toBe('Invalid input');
+        })
+    })
+    it('400: Returns "Invalid input" for invalid order query', () => {
+        return request(app)
+        .get('/api/reviews/order=FROMTHEMIDDLE')
+        .expect(400)
+        .then( ({ body }) => {
+            expect(body.msg).toBe('Invalid input');
+        })
+    })
+})
+/*
+*/

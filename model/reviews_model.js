@@ -1,3 +1,4 @@
+const { format } = require('express/lib/response');
 const db = require('../db/connection');
 
 exports.selectReviewById = (review_id) => {
@@ -25,13 +26,46 @@ exports.updateReview = (review_id, votes) => {
         })
 }
 
-exports.selectReviews = () => {
-    return db.query(
-        `SELECT reviews.*, CAST (COUNT(comments.review_id) AS INTEGER) AS comment_count
+exports.selectReviews = (sort_by = 'created_at', order = 'DESC', category) => {
+
+    let queryVals = [];
+    const validSortByOptions = ['created_at', 'owner', 'category', 'review_id'];
+
+    let queryStr = `SELECT reviews.*, 
+    CAST (COUNT(comments.review_id) AS INTEGER) AS comment_count
     FROM reviews
-    LEFT JOIN comments ON reviews.review_id = comments.review_id 
-    GROUP BY reviews.review_id ORDER BY created_at DESC`)
-        .then((reviews) => {
-            return reviews.rows;
+    LEFT JOIN comments 
+    ON reviews.review_id = comments.review_id 
+    `
+
+    if (category) {
+        queryVals.push(category)
+        queryStr += ` WHERE category = $1`
+    }
+    queryStr += ` GROUP BY reviews.review_id`
+
+    if (validSortByOptions.includes(sort_by)) {
+        if(order === "ASC") {
+            queryStr += ` ORDER BY ${sort_by} ASC;`
+        } else if (order === "DESC") {
+            queryStr += ` ORDER BY ${sort_by} DESC`
+        } else {
+            return Promise.reject({
+                status: 400,
+                msg: 'Invalid input'
+            })
+        }
+    } else {
+        return Promise.reject({
+            status: 400,
+            msg: "Invalid input"
         })
+    }
+    return db.query(queryStr, queryVals)
+    .then((review) => {
+
+    return review.rows;
+})
+
 }
+
