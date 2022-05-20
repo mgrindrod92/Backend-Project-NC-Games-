@@ -257,7 +257,7 @@ describe('GET//api/reviews/:review_id/comments', () => {
         return request(app)
             .get('/api/reviews/2/comments')
             .expect(200)
-            .then(( {body} ) => {
+            .then(({ body }) => {
                 const reviewComments = body
                 expect(reviewComments.length).toBe(3);
                 expect(Array.isArray(reviewComments)).toBe(true);
@@ -276,28 +276,108 @@ describe('GET//api/reviews/:review_id/comments', () => {
     })
     it('404: Returns a 404 error when passed a review id that does not exist', () => {
         return request(app)
-        .get('/api/reviews/98765/comments')
-        .expect(404)
-        .then( ({ body }) => {
-        expect(body.msg).toBe('Route not found')
-        })
+            .get('/api/reviews/98765/comments')
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Route not found')
+            })
     })
     it('400: Returns a 400 error status and message when review_id is invalid', () => {
         return request(app)
-        .get('/api/reviews/theidsofmarch/comments')
-        .expect(400)
-        .then( ({ body }) => {
-            expect(body.msg).toBe('Invalid input');
-        })
+            .get('/api/reviews/theidsofmarch/comments')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Invalid input');
+            })
     })
     it('200: Returns a 200 when no comments are found for a given review_id', () => {
         return request(app)
-        .get('/api/reviews/9/comments')
-        .expect(200)
-        .then( ({ body }) => {
-            expect(body).toEqual([])
+            .get('/api/reviews/9/comments')
+            .expect(200)
+            .then(({ body }) => {
+                expect(body).toEqual([])
+            })
+    })
+    // TASK 10
+
+    describe('POST/api/reviews/:review_id/comments', () => {
+        it('201: adds a comment to review_id and responds with the comment', () => {
+            const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
+
+            return request(app)
+                .post('/api/reviews/1/comments')
+                .send(newComment)
+                .expect(201)
+                .then(({ body }) => {
+                    expect(body.comment).toEqual(expect.objectContaining({
+                        comment_id: 7,
+                        author: 'mallionaire',
+                        body: 'Yeah, not bad, I guess',
+                        votes: 0,
+                        review_id: 1,
+                        created_at: expect.any(String)
+                    }))
+                })
+        })
+
+        it('201: adds a comment to review_id and responds with the comment', () => {
+            const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess', hello: 12 };
+
+            return request(app)
+                .post('/api/reviews/1/comments')
+                .send(newComment)
+                .expect(201)
+                .then(({ body }) => {
+                    expect(body.comment.hello).toBe(undefined);
+                })
+        })
+
+    it('400: Returns "invalid input" when the passed body does not contain both the username and body keys', () => {
+        const newComment = { usernaimasdasda: 'mallionaire', bodayasdasd: 'Yeah, not bad, I guess' }
+        return request(app)
+        .post('/api/reviews/1/comments')
+        .send(newComment)
+        .expect(400)        
+        .then(({ body }) => {
+            expect(body.msg).toBe('Invalid input');
         })
     })
+
+    it('404: "Resource not found" message provided when username not in database tries to post', () => {
+        const newComment = { username: 'mattyG', body: 'I loved it!' }
+
+        return request(app)
+            .post('/api/reviews/1/comments')
+            .send(newComment)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe('Resource not found');
+                })
+    })
+
+    it('400: Returns "Invalid input" when given a non-number as review_id', ( )=> {
+        const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
+
+        return request(app)
+        .post('/api/reviews/jygjvjvh/comments')
+        .send(newComment)
+        .expect(400)
+        .then( ({body}) => {
+            expect(body.msg).toBe('Invalid input');
+        })
+    })
+
+    it('404: "Resource not found" when given number that does not match a review_id', () => {
+        const newComment = { username: 'mallionaire', body: 'Yeah, not bad, I guess' };
+
+        return request(app).post('/api/reviews/12345/comments')
+        .send(newComment)
+        .expect(404)
+        .then( ({ body }) => 
+        expect(body.msg).toBe('Resource not found'))
+    })
+
+})
 
     /*
 

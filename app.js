@@ -2,7 +2,7 @@ const express = require('express');
 const { getCategories } = require('./controller/category_controller');
 const { getReviewById, patchReview, getReviews } = require('./controller/reviews_controller');
 const { getUsers } = require('./controller/users_controller');
-const { getCommentsByReviewId } = require('./controller/comments_controller');
+const { getCommentsByReviewId, postComment } = require('./controller/comments_controller');
 
 const app = express();
 app.use(express.json());
@@ -26,6 +26,9 @@ app.get('/api/reviews', getReviews);
 // TASK 9 - Get all comments for a specific review
 app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
 
+// TASK 10 - Post a new comment
+app.post('/api/reviews/:review_id/comments', postComment)
+
 // 404 error
 app.all('/*', (req, res) => {
     res.status(404).send({ msg: 'Route not found' })
@@ -35,6 +38,9 @@ app.all('/*', (req, res) => {
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {
         res.status(400).send({ msg: 'Invalid input' })
+    }
+    if (err.code === '23503') {
+        res.status(404).send({ msg: 'Resource not found' })
     }
     next(err);
 })
