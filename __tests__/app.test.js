@@ -257,9 +257,8 @@ describe('GET//api/reviews/:review_id/comments', () => {
         return request(app)
             .get('/api/reviews/2/comments')
             .expect(200)
-            .then(( body ) => {
-                console.log(body._body);
-                const reviewComments = body._body
+            .then(( {body} ) => {
+                const reviewComments = body
                 expect(reviewComments.length).toBe(3);
                 expect(Array.isArray(reviewComments)).toBe(true);
 
