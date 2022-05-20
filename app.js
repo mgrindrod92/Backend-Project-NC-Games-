@@ -47,15 +47,15 @@ app.use((err, req, res, next) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-    if(err.status && err.msg) {
-    res.status(err.status).send({ msg: err.msg })
+    if (err.status && err.msg) {
+        res.status(err.status).send({ msg: err.msg })
     }
     next(err);
 })
 
 // final error handler
 app.use((err, req, res, next) => {
-res.status(500).send('Server Error')
+    res.status(500).send('Server Error')
 });
 
 // // Testing with Insomnia
