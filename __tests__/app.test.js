@@ -475,5 +475,38 @@ describe('GET/api/reviews?sort_byQUERY1&order=ASC/DESC&category=QUERY3 queries',
         })
     })
 })
+
+// TASK 12
+
+describe('DELETE/api/comments/:comment_id', () => {
+    it('204: removes comment with the given comment_id', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then( () => {
+            return request(app)
+            .get('/api/reviews/2/comments')})
+            .then( ({ body }) => {
+
+                expect(body.length).toBe(2);
+            })
+    })
+    it('404: Returns "Invalid input" if comment_id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/4567')
+        .expect(404)
+        .then( ({body}) => {
+            expect(body.msg).toBe('This comment doesn\'t exist');
+        })
+    })
+    it('400: Returns "invalid input" if comment_id is not a number', () => {
+        return request(app)
+        .delete('/api/comments/notactuallyanumber')
+        .expect(400)
+        .then( ({body}) => {
+            expect(body.msg).toBe('Invalid Comment ID!');
+        })
+    })
+})
 /*
 */

@@ -2,7 +2,7 @@ const express = require('express');
 const { getCategories } = require('./controller/category_controller');
 const { getReviewById, patchReview, getReviews } = require('./controller/reviews_controller');
 const { getUsers } = require('./controller/users_controller');
-const { getCommentsByReviewId, postComment } = require('./controller/comments_controller');
+const { getCommentsByReviewId, postComment, deleteCommentById } = require('./controller/comments_controller');
 
 const app = express();
 app.use(express.json());
@@ -28,6 +28,9 @@ app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
 
 // TASK 10 - Post a new comment
 app.post('/api/reviews/:review_id/comments', postComment)
+
+// TASK 12 - Delete a comment
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 // 404 error
 app.all('/*', (req, res) => {
