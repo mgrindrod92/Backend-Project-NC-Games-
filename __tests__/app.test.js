@@ -32,17 +32,20 @@ describe('GET api/notcategories', () => {
 
 describe('GET api/categories', () => {
     it('200: returns a list of categories of games with the correct format', () => {
-        return request(app).get('/api/categories').expect(200).then(res => {
-            expect(res.body.categories.length).toBe(4);
-            expect(Array.isArray(res.body.categories)).toBe(true);
+        return request(app).get('/api/categories')
+            .expect(200)
+            .then(({ body }) => {
+                const categories = body.categories;
+                expect(categories.length).toBe(4);
+                expect(Array.isArray(categories)).toBe(true);
 
-            res.body.categories.forEach(category => {
-                expect.objectContaining({
-                    slug: expect.any(String),
-                    description: expect.any(String)
+                categories.forEach(category => {
+                    expect.objectContaining({
+                        slug: expect.any(String),
+                        description: expect.any(String)
+                    })
                 })
             })
-        })
     });
 });
 
@@ -161,7 +164,6 @@ describe('PATCH api/reviews/:review_id', () => {
                 expect(body.msg).toBe('No review found with this review id'))
     })
     test('400: Returns an error status and message when review_id is invalid', () => {
-        const review_id = 'notavalidid'
         return request(app)
             .patch('/api/reviews/notavalidid')
             .send({ inc_votes: 1 })
@@ -189,11 +191,11 @@ describe('GET /api/users', () => {
         return request(app)
             .get('/api/users')
             .expect(200)
-            .then(res => {
-                expect(res.body.users.length).toBe(4);
-                expect(Array.isArray(res.body.users)).toBe(true);
+            .then(({ body }) => {
+                expect(body.users.length).toBe(4);
+                expect(Array.isArray(body.users)).toBe(true);
 
-                res.body.users.forEach(user => {
+                body.users.forEach(user => {
                     expect.objectContaining({
                         username: expect.any(String),
                         name: expect.any(String),
@@ -218,14 +220,14 @@ describe('GET /api/users', () => {
 describe('GET/api/reviews', () => {
     it('200: responds with an object of reviews containing an array sorted by date in descending order', () => {
         return request(app)
-        .get('/api/reviews')
-        .expect(200)
-            .then(res => {
-                const reviews = res.body.reviews
+            .get('/api/reviews')
+            .expect(200)
+            .then(({ body }) => {
+                const reviews = body.reviews
                 expect(reviews.length).toBe(13)
                 expect(Array.isArray(reviews)).toBe(true);
 
-                res.body.reviews.forEach(user => {
+                body.reviews.forEach(user => {
                     expect.objectContaining({
                         owner: expect.any(String),
                         title: expect.any(String),
@@ -236,17 +238,68 @@ describe('GET/api/reviews', () => {
                         votes: expect.any(Number),
                         comment_count: expect.any(Number)
                     })
+                })
+                expect(reviews).toBeSortedBy('created_at', { descending: true })
             })
-        expect(reviews).toBeSortedBy('created_at', {descending: true})
-        console.log(reviews);
-        })
-        })
-it('404: provides a 404 error for an incorrect url', () => {
-    return request(app)
-        .get('/api/notreviews')
+    })
+    it('404: provides a 404 error for an incorrect url', () => {
+        return request(app)
+            .get('/api/notreviews')
+            .expect(404)
+            .then(body => {
+                expect(JSON.parse(body.text)).toEqual({ msg: 'Route not found' })
+            })
+    })
+});
+
+describe('GET//api/reviews/:review_id/comments', () => {
+    it('200: responds with an object (array) of comments for a given review', () => {
+        return request(app)
+            .get('/api/reviews/2/comments')
+            .expect(200)
+            .then(( {body} ) => {
+                const reviewComments = body
+                expect(reviewComments.length).toBe(3);
+                expect(Array.isArray(reviewComments)).toBe(true);
+
+                reviewComments.forEach(comment => {
+                    expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        review_id: expect.any(Number)
+                    })
+                })
+            })
+    })
+    it('404: Returns a 404 error when passed a review id that does not exist', () => {
+        return request(app)
+        .get('/api/reviews/98765/comments')
         .expect(404)
-        .then(body => {
-            expect(JSON.parse(body.text)).toEqual({ msg: 'Route not found' })
+        .then( ({ body }) => {
+        expect(body.msg).toBe('Route not found')
         })
+    })
+    it('400: Returns a 400 error status and message when review_id is invalid', () => {
+        return request(app)
+        .get('/api/reviews/theidsofmarch/comments')
+        .expect(400)
+        .then( ({ body }) => {
+            expect(body.msg).toBe('Invalid input');
+        })
+    })
+    it('200: Returns a 200 when no comments are found for a given review_id', () => {
+        return request(app)
+        .get('/api/reviews/9/comments')
+        .expect(200)
+        .then( ({ body }) => {
+            expect(body).toEqual([])
+        })
+    })
+
+    /*
+
+    */
 })
-        });
