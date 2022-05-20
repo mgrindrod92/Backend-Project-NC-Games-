@@ -1,6 +1,5 @@
 const db = require('../db/connection');
 const { userData } = require('../db/data/test-data');
-const { checkExists } = require('../model/utils_model'); 
 
 exports.selectCommentsByReviewId = (review_id) => {
     return db.query(`SELECT * FROM comments WHERE review_id = $1;`, [review_id])

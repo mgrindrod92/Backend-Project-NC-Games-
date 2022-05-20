@@ -375,7 +375,6 @@ describe('GET//api/reviews/:review_id/comments', () => {
         .expect(404)
         .then( ({ body }) => 
         expect(body.msg).toBe('Resource not found'))
-        // expect(JSON.parse(body.text)).toEqual({ msg: 'Resource not found }); 
     })
 
 })

@@ -12,9 +12,3 @@ exports.checkIdExists = (review_id) => {
                }
     })
 }
-
-// // Check reviews table to see if review_id exists
-// const checkIdExists = async('reviews', 'review_id', review_id)
-
-// // Check users table to see if username exists
-// const checkUsernameExists = async('users', 'username', userData.username)
