@@ -1,4 +1,3 @@
-const { format } = require('express/lib/response');
 const db = require('../db/connection');
 
 exports.selectReviewById = (review_id) => {

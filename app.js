@@ -3,6 +3,7 @@ const { getCategories } = require('./controller/category_controller');
 const { getReviewById, patchReview, getReviews } = require('./controller/reviews_controller');
 const { getUsers } = require('./controller/users_controller');
 const { getCommentsByReviewId, postComment, deleteCommentById } = require('./controller/comments_controller');
+const { getAPI } = require('./controller/api_controller');
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,9 @@ app.post('/api/reviews/:review_id/comments', postComment)
 // TASK 12 - Delete a comment
 app.delete('/api/comments/:comment_id', deleteCommentById)
 
+// TASK 13 - Get API
+app.get('/api', getAPI)
+
 // 404 error
 app.all('/*', (req, res) => {
     res.status(404).send({ msg: 'Route not found' })
@@ -56,15 +60,22 @@ app.use((err, req, res, next) => {
     next(err);
 })
 
-// final error handler
+// Final error handler
 app.use((err, req, res, next) => {
     res.status(500).send('Server Error')
 });
 
-// // Testing with Insomnia
-// app.listen(9801, (err) => {
-//     if (err) console.log(err);
-//     else console.log(`Listening on port 9801...`);
-// })
+// let PORT = process.env.PORT;
+// if (PORT === null || PORT === "") {
+//     PORT = 5678
+// }
+
+const { PORT = 9090 } = process.env;
+
+// Testing with Insomnia
+app.listen(PORT, (err) => {
+    if (err) throw (err);
+    console.log(`Listening on port ${PORT}...`);
+})
 
 module.exports = app;

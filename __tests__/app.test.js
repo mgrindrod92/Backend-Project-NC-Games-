@@ -2,6 +2,7 @@ process.env.NODE_ENV = 'test';
 
 const db = require('../db/connection.js');
 
+const fs = require('fs.promises')
 const request = require('supertest');
 // const pg = require('pg');
 // const format = require('pg-format');
@@ -508,5 +509,13 @@ describe('DELETE/api/comments/:comment_id', () => {
         })
     })
 })
-/*
-*/
+
+describe('GET/api', () => {
+    it('200: responds with a JSON describing all available endpoints', () => {
+        return request(app).get('/api').expect(200)
+        .then( ({body}) => {
+            expect(body.hasOwnProperty('data')).toBe(true);
+        })
+    });
+});
+
