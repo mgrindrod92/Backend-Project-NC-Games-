@@ -1,4 +1,4 @@
-const db = require('../db/listen');
+const db = require('../db/connection');
 
 exports.checkIdExists = (review_id) => {
     return db.query

@@ -1,4 +1,4 @@
-const db = require('../db/listen');
+const db = require('../db/connection');
 
 exports.selectReviewById = (review_id) => {
     return db.query(`SELECT reviews.*, CAST (COUNT(comments.review_id) AS INTEGER) AS comment_count

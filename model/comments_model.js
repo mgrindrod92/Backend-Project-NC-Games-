@@ -1,4 +1,4 @@
-const db = require('../db/listen');
+const db = require('../db/connection');
 const { userData } = require('../db/data/test-data');
 
 exports.selectCommentsByReviewId = (review_id) => {
