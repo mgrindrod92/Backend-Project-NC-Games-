@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test';
 
-const db = require('../db/connection.js');
+const db = require('../db/listen.js');
 
 const fs = require('fs.promises')
 const request = require('supertest');

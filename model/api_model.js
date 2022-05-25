@@ -1,4 +1,4 @@
-const db = require('../db/connection');
+const db = require('../db/listen');
 const fs = require('fs.promises')
 
 exports.fetchAPI = () => {
