@@ -33,12 +33,11 @@
     "jest-sorted": "^1.0.14",
     "nodemon": "^2.0.16",
     "pg-format": "^1.0.4",
-    "supertest": "^6.2.3"
-  },
-  "devDependencies": {
+    "supertest": "^6.2.3",
     "dotenv": "^16.0.1",
     "pg": "^8.7.3"
   },
+  "devDependencies": {},
   "jest": {
     "setupFilesAfterEnv": [
       "jest-extended/all"
