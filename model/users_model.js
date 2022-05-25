@@ -1,4 +1,4 @@
-const db = require('../db/connection');
+const db = require('../db/listen');
 
 exports.selectUsers = () => {
     return db.query('SELECT * FROM users')

@@ -1,4 +1,5 @@
 {
+
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
@@ -30,5 +31,93 @@
         }
       ]
     }
+  }, 
+  "GET /api/reviews/:review_id": {
+    "description": "provides a specific review for an object",
+    "queries": [],
+    "exampleResponse": {
+      "review": {
+        "review_id": 9,
+        "title": "A truly Quacking Game; Quacks of Quedlinburg",
+        "designer": "Wolfgang Warsch",
+        "owner": "mallionaire",
+        "review_img_url":
+          "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+        "review_body": 
+          "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+        "category": "social deduction",
+        "created_at": "2021-01-18T10:01:41.251Z",
+        "votes": 10,
+        "comment_count": 1
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "returns an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+        "username": "mallionaire",
+        "name": "haz",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "returns an array of all comments for a given review (id)",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 2,
+          "body": "My dog loved this game too!",
+          "review_id": 3,
+          "author": "mallionaire",
+          "votes": 0,
+          "created_at": "2021-01-18T10:09:05.410Z"
+        }
+      ]
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "Increases/decreases votes of a given review by the passed number and returns the value",
+    "queries": [],
+    "patchObjectExample": {"inc_votes": 5},
+    "exampleResponse": {
+      "reviews": [
+        {
+          "title": "Quacks of Quedlinburg",
+          "desginer": "Wolfgang Warsch",
+          "owner": "mallionaire",
+          "review_img_url": "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+          "category": "social deduction",
+          "created_at": "2021-01-18T10:01:41.251Z",
+          "votes": 10
+        }
+      ]
+    }  
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "Posts new comment to given review and returns comment",
+    "queries": [],
+    "postObjectExample": {"username": "mallionaire", "body": "Yeah, not bad, I guess"},
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 3,
+        "body": "Yeah, not bad, I guess",
+        "review_id": 2,
+        "author": "mallionaire",
+        "votes": 1,
+        "created_at": "2022-05-21T17:39:42.350Z"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the specified comment",
+    "queries": ["category", "sort_by", "order"],
+    "exampleResponse": []
   }
 }
+
