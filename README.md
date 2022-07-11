@@ -30,18 +30,18 @@ git clone https://github.com/mgrindrod92/Backend-Project-NC-Games-
 
 Use npm i **_____** (using the below to fill the **_____** space)
 
-dotenv
-express
-fs
-fs.promises
-husky
-jest
-jest-extended
-jest-sorted
-nodemon
-pg
-pg-format
-supertest
+dotenv /
+express /
+fs /
+fs.promises /
+husky /
+jest /
+jest-extended /
+jest-sorted /
+nodemon /
+pg /
+pg-format /
+supertest 
 
 ## Create local .env files
 
